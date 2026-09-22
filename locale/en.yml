@@ -1,0 +1,92 @@
+ernestdefoe-ruffle:
+
+  forum:
+    # Rendered into the post itself by the formatter, as the link a reader gets
+    # with JavaScript off. Resolved against the forum's DEFAULT locale at
+    # compile time, then replaced per reader once the player mounts.
+    open_file: Open this Flash file
+
+    play: Play Flash movie
+    playing: Flash movie
+    loading: Loading the Flash player…
+    failed: The Flash player could not be loaded.
+    failed_help: The file may have moved, or the player could not be fetched.
+    open_original: Open the file directly
+
+    composer:
+      button: Flash movie
+      title: Insert a Flash movie
+      url: Address of the .swf file
+      url_placeholder: https://example.com/movie.swf
+      size: Size
+      width: Width
+      height: Height
+      insert: Insert
+      invalid_url: Enter a full http:// or https:// address.
+      not_swf: That address does not end in .swf. Insert it anyway?
+
+  admin:
+    settings:
+      title: Ruffle
+
+      intro: >
+        Ruffle plays Flash movies as a sandboxed emulator compiled to
+        WebAssembly. It is not Adobe's plugin and shares none of its code, so
+        the ActiveX and NPAPI vulnerabilities that ended Flash do not apply to
+        it. What a .swf can still do is call out to the page and to the network,
+        and both of those are switched off below by default.
+
+      player_heading: The player
+      source_label: Where the player is loaded from
+      source_cdn: A public CDN (jsDelivr)
+      source_self: A copy you host yourself
+      version_label: Ruffle version
+      version_help: >
+        Pinned on purpose. "latest" would let the player change underneath a
+        running forum, which produces bug reports nobody can reproduce.
+      path_label: Address of your copy
+      path_help: >
+        The folder containing ruffle.js, from the self-hosted package on
+        Ruffle's releases page. Your server must serve .wasm files as
+        application/wasm, or the player loads and then fails to start.
+      path_placeholder: https://your-forum.example/assets/ruffle/
+
+      safety_heading: What a movie is allowed to do
+      allow_script_access_label: Let movies call JavaScript on the page
+      allow_script_access_help: >
+        ActionScript's ExternalInterface. Off unless every .swf on your forum
+        is one you put there yourself.
+      allow_networking_label: Network access
+      allow_networking_none: None
+      allow_networking_internal: Same movie only
+      allow_networking_all: Unrestricted
+      allow_networking_help: >
+        Controls getURL, navigateToURL and Socket. "None" stops a movie opening
+        pages or making connections of its own.
+
+      display_heading: Display
+      autoplay_label: When a movie starts
+      autoplay_click: When the reader presses play
+      autoplay_auto: Automatically, if the browser allows it
+      autoplay_on: Always automatically
+      autoplay_help: >
+        Waiting for a press is both kinder and faster: the player itself is
+        several megabytes and is not fetched until someone asks for it.
+      width_label: Default width
+      height_label: Default height
+      size_help: >
+        Used when a post does not give a size. 550 × 400 was Flash's own
+        default stage.
+
+      links_heading: Links
+      upgrade_links_label: Turn plain links to .swf files into players
+      upgrade_links_help: >
+        A post containing a bare link to a .swf file gets a player instead.
+        Done in the browser, so the post itself still stores an ordinary link —
+        switch this off and every one of them is a link again.
+
+      how_heading: How to post one
+      how_body: >
+        Write [swf]https://example.com/movie.swf[/swf], or add the toolbar
+        button below. Width and height are optional:
+        [swf width=800 height=600]https://example.com/movie.swf[/swf].

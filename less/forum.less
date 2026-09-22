@@ -1,0 +1,123 @@
+/*
+ * 🚨 Every colour here is a Flarum variable, never a literal.
+ *
+ * A hardcoded background is the single most common way an extension looks
+ * finished on the theme it was built against and unreadable on a dark one —
+ * and the author never sees it, because they only ever look at their own
+ * forum.
+ */
+
+.RuffleEmbed {
+  margin: 1em 0;
+}
+
+.RuffleEmbed-stage {
+  position: relative;
+  width: 100%;
+  /* aspect-ratio and max-width are set inline from the post's own dimensions,
+     so the box is the size the movie will be BEFORE it loads — pressing play
+     must not shove the rest of the thread down the page. */
+  background: var(--control-bg);
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.RuffleEmbed-play {
+  .Button();
+
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+
+  .icon {
+    font-size: 32px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--control-bg);
+    color: var(--control-color);
+  }
+}
+
+.RuffleEmbed-caption {
+  font-size: 13px;
+}
+
+.RuffleEmbed-message,
+.RuffleEmbed-help {
+  color: var(--muted-color);
+  font-size: 13px;
+  margin: 0 0 4px;
+  padding: 0 12px;
+  text-align: center;
+}
+
+.RuffleEmbed--failed {
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+  padding: 16px 12px;
+  text-align: center;
+}
+
+/*
+ * The server-rendered link. It is what a reader sees with JavaScript off, in a
+ * feed reader and in Flarum's notification emails — where none of the CSS
+ * above applies either, which is why it has to read correctly as a plain link
+ * with no styling at all.
+ */
+.RuffleEmbed-fallback {
+  font-size: 13px;
+}
+
+.RuffleEmbed > .RuffleEmbed-fallback {
+  /* Only while undecorated; `decorate` replaces it with the stage. */
+  display: inline-block;
+}
+
+/* The card Scribe's editor shows in place of a live <embed>. */
+.RuffleEmbed-editorCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+  background: var(--control-bg);
+  color: var(--control-color);
+  font-size: 13px;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.ProseMirror-selectednode {
+    outline: 2px solid var(--primary-color);
+  }
+}
+
+.InsertFlashModal-sizeFields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .FormControl {
+    width: 100px;
+  }
+}
