@@ -10,8 +10,18 @@ ernestdefoe-ruffle:
     playing: Flash movie
     loading: Loading the Flash player…
     failed: The Flash player could not be loaded.
-    failed_help: The file may have moved, or the player could not be fetched.
+    failed_help: The player itself could not be fetched. Check the extension's settings, and any Content-Security-Policy on this forum.
+    failed_movie: This Flash movie could not be loaded.
     open_original: Open the file directly
+
+    # Why the browser could not read the .swf. Shown in place of the generic
+    # help line above, because "the player failed" and "the file failed" have
+    # completely different fixes.
+    reason_mixed: This forum is served over HTTPS but the file is linked over plain HTTP, so the browser refuses to load it. Link it over HTTPS.
+    reason_status: The address answered with error {code}.
+    reason_cors: The file is on another site, and that site does not let this forum read it — it needs to send an Access-Control-Allow-Origin header. (The file may also simply no longer be there; from here the two look identical.) Hosting the file on this forum's own domain avoids the problem entirely.
+    reason_unreachable: The address could not be reached at all. Check that it is correct and that the site is up.
+    reason_unknown: The file was readable, so the movie itself may be damaged or in a format Ruffle cannot play yet.
 
     composer:
       button: Flash movie

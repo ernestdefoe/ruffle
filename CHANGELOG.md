@@ -3,6 +3,31 @@
 Ruffle for Flarum — play Flash (`.swf`) in posts, through a sandboxed emulator
 rather than a plugin that no longer exists.
 
+## [0.1.2] — 2026-09-23
+
+### Fixed
+
+- **"Failed to fetch the SWF" now says why.** A movie the browser cannot read —
+  on another domain without an `Access-Control-Allow-Origin` header, linked over
+  `http://` from an HTTPS forum, or simply gone — produced Ruffle's own generic
+  panel, which sends people to look at the player, the extension and their
+  Flarum install when the cause is the file's host. The file is now checked
+  before the player is started, and the embed says which of those it is.
+
+  🚨 This could not be done in a `catch`: `player.ruffle().load()` does **not**
+  reject when the fetch fails. It resolves, and Ruffle renders the failure
+  inside itself — so a `try`/`catch` around it looks like handling and silently
+  never runs.
+
+- **"The Flash player could not be loaded" is no longer shown when the player
+  loaded fine.** The player failing and the movie failing have different causes
+  and different fixes, and they were sharing one sentence.
+
+### Changed
+
+- Checking the file first also means a movie that cannot play never mounts
+  several megabytes of player in order to display an error.
+
 ## [0.1.1] — 2026-09-23
 
 ### Fixed

@@ -1,4 +1,5 @@
 import app from 'flarum/common/app';
+import extractText from 'flarum/common/utils/extractText';
 import { settings } from '../common/settings';
 
 /** Set on an element once we have taken it over, so we never do it twice. */
@@ -60,17 +61,96 @@ function size(embed: HTMLElement): { width: number; height: number } {
   };
 }
 
-function fail(embed: HTMLElement, url: string): void {
+/**
+ * Work out WHY the browser could not read a .swf, from the browser.
+ *
+ * 🚨 Run BEFORE the player is handed the URL, not in a catch afterwards.
+ * `player.ruffle().load()` does NOT reject when the .swf cannot be fetched — it
+ * resolves, and Ruffle draws its own panel inside the player saying it failed
+ * to fetch. So there is no exception to catch: a `try`/`catch` around `load()`
+ * looks like it handles this and silently never runs. Checking first is the
+ * only way to say anything useful, and it also avoids mounting several
+ * megabytes of player that can only display an error.
+ *
+ * Ruffle's own message stops at "failed to fetch the SWF", which sends people
+ * to look at the player, at the extension and at their Flarum install — when
+ * the cause is almost always the file's own host saying no.
+ *
+ * 🚨 Cross-origin, this CANNOT tell a missing file from a missing CORS header.
+ * An opaque `no-cors` response resolves for a 404 exactly as it does for a 200,
+ * so the status is not visible to us at all. The message says both rather than
+ * picking one — a confident wrong diagnosis is worse than an honest pair.
+ */
+async function diagnose(url: string): Promise<string | null> {
+  let target: URL;
+
+  try {
+    target = new URL(url, window.location.href);
+  } catch {
+    return t('reason_unreachable');
+  }
+
+  // Definite, and worth naming on its own: the browser blocks it outright and
+  // nothing about the file or its host is wrong.
+  if (window.location.protocol === 'https:' && target.protocol === 'http:') {
+    return t('reason_mixed');
+  }
+
+  try {
+    /*
+     * A plain GET, and deliberately not a HEAD (not every host allows one) nor
+     * a Range request (some answer 416 and look broken when they are fine).
+     * `fetch` resolves as soon as the headers arrive and the body is never
+     * read here, so this does not download the movie twice — Ruffle's own
+     * request a moment later is served from cache.
+     */
+    const res = await fetch(url);
+
+    if (res.ok) return null;
+
+    /*
+     * 🚨 `extractText`, not a cast. A translation with a parameter comes back
+     * as an array of vnodes, not a string — casting it lands `[object Object]`
+     * in the message, and only for the one line that interpolates anything.
+     */
+    return extractText(
+      app.translator.trans('ernestdefoe-ruffle.forum.reason_status', { code: String(res.status) })
+    );
+  } catch {
+    try {
+      /*
+       * An opaque response still resolves when the host is reachable, which
+       * separates "your forum may not read this" from "this address goes
+       * nowhere". It cannot separate either from a 404 — see above.
+       */
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
+      return t('reason_cors');
+    } catch {
+      return t('reason_unreachable');
+    }
+  }
+}
+
+/**
+ * 🚨 Two different failures, two different messages.
+ *
+ * The player failing to load and the MOVIE failing to load are not the same
+ * thing and do not have the same fix, but they used to print the same sentence
+ * — "The Flash player could not be loaded" — which is actively misleading when
+ * the player is sitting there working and it is the file that could not be
+ * read. It points at the extension instead of at the file's host.
+ */
+function fail(embed: HTMLElement, url: string, kind: 'player' | 'movie', reason?: string): void {
   embed.classList.add('RuffleEmbed--failed');
   embed.replaceChildren();
 
   const message = document.createElement('p');
   message.className = 'RuffleEmbed-message';
-  message.textContent = t('failed');
+  message.textContent = kind === 'player' ? t('failed') : t('failed_movie');
 
   const help = document.createElement('p');
   help.className = 'RuffleEmbed-help';
-  help.textContent = t('failed_help');
+  help.textContent = reason ?? t('failed_help');
 
   const link = document.createElement('a');
   link.className = 'RuffleEmbed-fallback';
@@ -113,6 +193,14 @@ function prepare(embed: HTMLElement): void {
     loading.textContent = t('loading');
     stage.appendChild(loading);
 
+    // Before the player, not after — see diagnose().
+    const problem = await diagnose(url);
+
+    if (problem !== null) {
+      fail(embed, url, 'movie', problem);
+      return;
+    }
+
     try {
       // The only place the player is pulled in. Everything above this line is
       // a few hundred bytes; everything below it is several megabytes.
@@ -122,7 +210,15 @@ function prepare(embed: HTMLElement): void {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('[ruffle]', e);
-      fail(embed, url);
+
+      /*
+       * The failure says which half of it gave up (see RuffleError in
+       * player.ts). The movie case is all but unreachable now that the file is
+       * checked first, but a file can still vanish between the two requests.
+       */
+      const movie = (e as { stage?: string })?.stage === 'movie';
+
+      fail(embed, url, movie ? 'movie' : 'player', movie ? await diagnose(url) ?? undefined : undefined);
     }
   };
 

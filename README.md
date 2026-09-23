@@ -74,6 +74,28 @@ Two things your server must get right:
 - **If you set a Content-Security-Policy**, it needs `'wasm-unsafe-eval'` in
   `script-src`.
 
+## Where your .swf files live
+
+🚨 **The browser fetches the movie, so the movie's host has to let it.**
+
+If the `.swf` is on the **same domain as your forum**, nothing to do — this is
+the case that just works, and it is the reason uploading the file to your forum
+(fof/upload, or anywhere under your own domain) is the easiest answer.
+
+If it is on **another domain**, that domain must send
+`Access-Control-Allow-Origin`, or the browser refuses to hand the file to the
+player and Ruffle reports only "failed to fetch the SWF". Nginx:
+
+```
+location ~* \.swf$ { add_header Access-Control-Allow-Origin "https://your-forum.example"; }
+```
+
+And a forum served over HTTPS cannot load a movie linked over plain `http://`
+at all — the browser blocks it as mixed content.
+
+This extension checks the file before it starts the player and tells you which
+of these it is, rather than leaving you with Ruffle's generic message.
+
 ## Settings
 
 | | |

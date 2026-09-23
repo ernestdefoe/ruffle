@@ -11,6 +11,25 @@ import { settings, type RuffleSettings } from '../common/settings';
  * reader has actually asked for a movie.
  */
 
+/**
+ * Which half of `play()` gave up.
+ *
+ * 🚨 The two have different causes and different fixes — the PLAYER not
+ * arriving is a CDN, a CSP or a self-hosted path; the MOVIE not arriving is the
+ * file's own host. The caller cannot tell them apart from the outside, and
+ * sniffing the message would mean depending on wording Ruffle is free to
+ * change, so the failure says which one it was.
+ */
+export class RuffleError extends Error {
+  constructor(
+    message: string,
+    public readonly stage: 'player' | 'movie'
+  ) {
+    super(message);
+    this.name = 'RuffleError';
+  }
+}
+
 interface RufflePlayerElement extends HTMLElement {
   ruffle(): { load(config: Record<string, unknown>): Promise<void> };
   remove(): void;
@@ -81,7 +100,7 @@ function loadRuffle(config: RuffleSettings): Promise<RuffleApi> {
     script.async = true;
     script.onload = () => {
       if (window.RufflePlayer?.newest) resolve(window.RufflePlayer);
-      else reject(new Error('ruffle.js loaded but exposed no player'));
+      else reject(new RuffleError('ruffle.js loaded but exposed no player', 'player'));
     };
     /*
      * 🚨 Reset the lock on failure, so a reader who was offline for the first
@@ -90,7 +109,7 @@ function loadRuffle(config: RuffleSettings): Promise<RuffleApi> {
      */
     script.onerror = () => {
       loading = null;
-      reject(new Error('could not load ruffle.js from ' + script.src));
+      reject(new RuffleError('could not load ruffle.js from ' + script.src, 'player'));
     };
 
     document.head.appendChild(script);
@@ -132,6 +151,19 @@ export async function play(
    * (`allowNetworking` defaults to "all"), so leaving them unset would be
    * choosing the wrong thing by not choosing.
    */
+  try {
+    await loadMovie(player, url, size, config);
+  } catch (e) {
+    throw new RuffleError(e instanceof Error ? e.message : String(e), 'movie');
+  }
+}
+
+async function loadMovie(
+  player: RufflePlayerElement,
+  url: string,
+  size: { width: number; height: number },
+  config: RuffleSettings
+): Promise<void> {
   await player.ruffle().load({
     url,
     allowScriptAccess: config.allowScriptAccess,
