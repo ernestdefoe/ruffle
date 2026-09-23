@@ -55,6 +55,24 @@ class Configure
          */
         $tag->attributes->add('url')->filterChain->append('#url');
 
+        /*
+         * A still image the author supplies, shown in place of an empty box
+         * until someone presses play.
+         *
+         * 🚨 There is no way to generate this automatically that is worth
+         * having. The only thing that can render a frame of a .swf is Ruffle,
+         * which means downloading several megabytes of player and the movie
+         * itself — for every embed on the page, to show a thumbnail. That is
+         * strictly worse than just playing them. Extracting a frame
+         * server-side means decoding compressed SWF and rasterising vector
+         * graphics in PHP, or shelling out to swftools. So: the author knows
+         * what the movie looks like, and `<video poster>` has had the right
+         * answer to this for fifteen years.
+         */
+        $poster = $tag->attributes->add('poster');
+        $poster->required = false;
+        $poster->filterChain->append('#url');
+
         foreach (['width', 'height'] as $name) {
             $attribute = $tag->attributes->add($name);
             $attribute->required = false;
@@ -82,6 +100,15 @@ class Configure
     private function template(): string
     {
         return '<div class="RuffleEmbed" data-swf="{@url}" data-width="{@width}" data-height="{@height}">'
+            /*
+             * In the stored HTML rather than drawn by JavaScript, so it is also
+             * what a link preview, a feed reader and a search engine see.
+             * `loading="lazy"` because a thread full of embeds should not fetch
+             * a screenshot for each one before you have scrolled to it.
+             */
+            .'<xsl:if test="@poster">'
+            .'<img class="RuffleEmbed-poster" src="{@poster}" alt="" loading="lazy"/>'
+            .'</xsl:if>'
             .'<a class="RuffleEmbed-fallback" href="{@url}" rel="nofollow noopener ugc" target="_blank">'
             .$this->fallbackText()
             .'</a>'
@@ -144,6 +171,7 @@ class Configure
         $plugin->aliasAttribute('embed', 'src', 'url');
         $plugin->aliasAttribute('embed', 'width', 'width');
         $plugin->aliasAttribute('embed', 'height', 'height');
+        $plugin->aliasAttribute('embed', 'poster', 'poster');
     }
 
     /**

@@ -45,15 +45,13 @@ app.initializers.add('ernestdefoe/ruffle', () => {
             icon: 'fas fa-bolt',
             onclick: () =>
               app.modal.show(InsertFlashModal, {
-                onsubmit: ({
-                  url,
-                  width,
-                  height,
-                }: {
+                onsubmit: (movie: {
                   url: string;
                   width: number;
                   height: number;
+                  poster: string;
                 }) => {
+                  const { url, width, height } = movie;
                   /*
                    * Width and height are written out only when they differ
                    * from the forum's defaults. A post that says nothing about
@@ -63,7 +61,8 @@ app.initializers.add('ernestdefoe/ruffle', () => {
                    * each post at the moment it was written.
                    */
                   const attrs =
-                    width || height ? ` width=${width} height=${height}` : '';
+                    (width || height ? ` width=${width} height=${height}` : '') +
+                    (movie.poster ? ` poster=${movie.poster}` : '');
 
                   this.attrs.composer.editor.insertAtCursor(
                     `[swf${attrs}]${url}[/swf]`,

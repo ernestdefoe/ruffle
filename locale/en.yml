@@ -30,6 +30,12 @@ ernestdefoe-ruffle:
       title: Insert a Flash movie
       url: Address of the .swf file
       url_placeholder: https://example.com/movie.swf
+      poster: Preview image (optional)
+      poster_placeholder: https://example.com/screenshot.png
+      poster_help: >
+        Shown in place of an empty box until someone presses play. There is no
+        way to make one from the movie itself without loading the whole player,
+        which is what waiting for a press avoids.
       size: Size
       width: Width
       height: Height

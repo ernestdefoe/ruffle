@@ -3,7 +3,25 @@
 Ruffle for Flarum — play Flash (`.swf`) in posts, through a sandboxed emulator
 rather than a plugin that no longer exists.
 
-## [Unreleased]
+## [0.2.0] — 2026-09-23
+
+### Added
+
+- **A preview image.** `[swf poster=https://…/shot.png]…[/swf]`, a field in the
+  insert dialog for both editors, and an attribute on the Scribe node — where
+  the editor card shows the thumbnail too, so you can tell your movies apart
+  without opening the post.
+
+  It is rendered into the stored HTML rather than drawn by JavaScript, so it is
+  also what a link preview, a feed reader and a search engine see, and it is
+  `loading="lazy"` so a thread full of embeds does not fetch every screenshot
+  before you have scrolled to them.
+
+  🚨 There is deliberately **no automatic thumbnail**. The only thing that can
+  render a frame of a `.swf` is Ruffle, which means downloading several
+  megabytes of player and the movie for every embed on the page in order to
+  show a still — strictly worse than simply playing them, and the exact cost
+  that waiting for a press exists to avoid.
 
 ### Internal
 

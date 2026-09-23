@@ -205,6 +205,14 @@ function prepare(embed: HTMLElement): void {
 
   embed.dataset[CLAIMED] = '1';
 
+  /*
+   * 🚨 Taken BEFORE replaceChildren, which is about to empty the element. The
+   * poster is server-rendered (so it is in the page for readers with no
+   * JavaScript, and for link previews); rebuilding it here instead would mean
+   * two sources of truth for the same image.
+   */
+  const poster = embed.querySelector<HTMLImageElement>('.RuffleEmbed-poster');
+
   const { width, height } = size(embed);
   const stage = document.createElement('div');
   stage.className = 'RuffleEmbed-stage';
@@ -264,6 +272,12 @@ function prepare(embed: HTMLElement): void {
 
   button.append(icon, caption);
   button.addEventListener('click', start);
+
+  if (poster) {
+    stage.appendChild(poster);
+    stage.classList.add('RuffleEmbed-stage--hasPoster');
+  }
+
   stage.appendChild(button);
 
   embed.replaceChildren(stage);

@@ -30,6 +30,9 @@ archive can open them deliberately.
 
 - **`[swf]` in the composer.** `[swf]url[/swf]`, or with a size:
   `[swf width=800 height=600]url[/swf]`.
+- **A preview image**, if you give it one: `[swf poster=url/shot.png]url[/swf]`.
+  Shown in place of an empty box until someone presses play, and it is in the
+  stored HTML, so link previews and search engines see it too.
 - **A toolbar button** in Flarum's editor, and in
   [Scribe](https://github.com/ernestdefoe/scribe) if you use it — where a movie
   becomes a real block you can select, drag and delete.
@@ -73,6 +76,19 @@ Two things your server must get right:
   ```
 - **If you set a Content-Security-Policy**, it needs `'wasm-unsafe-eval'` in
   `script-src`.
+
+## Why there is no automatic thumbnail
+
+Because the only thing that can render a frame of a `.swf` is Ruffle, and that
+means downloading several megabytes of player **and** the movie — for every
+embed on the page — to show a still. That is strictly worse than just playing
+them, and it is the exact cost waiting for a press exists to avoid. Extracting a
+frame on the server means decoding compressed SWF and rasterising vector
+graphics in PHP, or shelling out to swftools.
+
+So the poster is yours to supply, the way `<video poster>` has worked for
+fifteen years. Without one you get a plain box with a play button, which is
+honest about what it is.
 
 ## Where your .swf files live
 

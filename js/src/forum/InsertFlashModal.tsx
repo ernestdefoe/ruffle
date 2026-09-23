@@ -13,7 +13,7 @@ import Stream from 'flarum/common/utils/Stream';
 import { settings } from '../common/settings';
 
 export interface InsertFlashAttrs extends IInternalModalAttrs {
-  onsubmit: (movie: { url: string; width: number; height: number }) => void;
+  onsubmit: (movie: { url: string; width: number; height: number; poster: string }) => void;
 }
 
 function t(key: string): string {
@@ -28,6 +28,7 @@ export default class InsertFlashModal extends FormModal<InsertFlashAttrs> {
   url = Stream('');
   width = Stream('');
   height = Stream('');
+  poster = Stream('');
 
   oninit(vnode: any) {
     super.oninit(vnode);
@@ -57,6 +58,18 @@ export default class InsertFlashModal extends FormModal<InsertFlashAttrs> {
             placeholder={t('url_placeholder')}
             bidi={this.url}
           />
+        </div>
+
+        <div className="Form-group">
+          <label>{t('poster')}</label>
+          <input
+            className="FormControl"
+            type="url"
+            inputmode="url"
+            placeholder={t('poster_placeholder')}
+            bidi={this.poster}
+          />
+          <div className="helpText">{t('poster_help')}</div>
         </div>
 
         <div className="Form-group InsertFlashModal-size">
@@ -129,6 +142,8 @@ export default class InsertFlashModal extends FormModal<InsertFlashAttrs> {
       url,
       width: positive(this.width(), config.width),
       height: positive(this.height(), config.height),
+      // Blank means "no poster", which the server simply omits.
+      poster: this.poster().trim(),
     });
 
     this.hide();

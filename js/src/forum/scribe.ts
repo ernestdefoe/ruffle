@@ -66,6 +66,7 @@ function node(kit: any) {
         src: { default: null },
         width: { default: null },
         height: { default: null },
+        poster: { default: null },
       };
     },
 
@@ -99,6 +100,16 @@ function node(kit: any) {
 
         dom.append(icon, label);
 
+        // The card shows the poster when there is one, so the author can see
+        // which movie this is without opening the post.
+        if (n.attrs.poster) {
+          const thumb = document.createElement('img');
+          thumb.className = 'RuffleEmbed-editorThumb';
+          thumb.src = n.attrs.poster;
+          thumb.alt = '';
+          dom.prepend(thumb);
+        }
+
         return { dom };
       };
     },
@@ -119,13 +130,25 @@ export default function registerWithScribe(): void {
       active: (editor: any) => editor.isActive('ruffleFlash'),
       run: (editor: any) => {
         app.modal.show(InsertFlashModal, {
-          onsubmit: ({ url, width, height }: { url: string; width: number; height: number }) => {
+          onsubmit: (movie: {
+            url: string;
+            width: number;
+            height: number;
+            poster: string;
+          }) => {
             editor
               .chain()
               .focus()
               .insertContent({
                 type: 'ruffleFlash',
-                attrs: { src: url, width: String(width), height: String(height) },
+                attrs: {
+                  src: movie.url,
+                  width: String(movie.width),
+                  height: String(movie.height),
+                  // null rather than '' so mergeAttributes omits it entirely;
+                  // an empty attribute would reach the server as a blank URL.
+                  poster: movie.poster || null,
+                },
               })
               .run();
           },

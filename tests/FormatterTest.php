@@ -122,6 +122,43 @@ class FormatterTest extends TestCase
         $this->assertStringContainsString('<a href="https://e.com/g.swf"', $out);
     }
 
+    public function test_a_poster_is_rendered_into_the_post(): void
+    {
+        $out = $this->render('[swf poster=https://e.com/shot.png]https://e.com/g.swf[/swf]');
+
+        $this->assertStringContainsString('<img class="RuffleEmbed-poster" src="https://e.com/shot.png"', $out);
+        $this->assertStringContainsString('loading="lazy"', $out);
+    }
+
+    public function test_no_poster_means_no_img_at_all(): void
+    {
+        $this->assertStringNotContainsString('RuffleEmbed-poster', $this->render('[swf]https://e.com/g.swf[/swf]'));
+    }
+
+    /**
+     * 🚨 A poster is a URL from a member like any other, so it goes through the
+     * same filter — and a rejected one must cost the poster, not the embed.
+     */
+    public function test_a_dangerous_poster_is_dropped_but_the_movie_survives(): void
+    {
+        $out = $this->render('[swf poster=javascript:alert(1)]https://e.com/g.swf[/swf]');
+
+        $this->assertStringNotContainsString('RuffleEmbed-poster', $out);
+        $this->assertStringNotContainsString('javascript:', $out);
+        $this->assertStringContainsString('data-swf="https://e.com/g.swf"', $out);
+    }
+
+    public function test_a_poster_survives_the_scribe_path(): void
+    {
+        $out = $this->render(
+            '<embed src="https://e.com/g.swf" poster="https://e.com/shot.png">',
+            scribe: true
+        );
+
+        $this->assertStringContainsString('src="https://e.com/shot.png"', $out);
+        $this->assertStringContainsString('data-swf="https://e.com/g.swf"', $out);
+    }
+
     public function test_the_embed_carries_a_link_for_readers_without_javascript(): void
     {
         $out = $this->render('[swf]https://e.com/g.swf[/swf]');
