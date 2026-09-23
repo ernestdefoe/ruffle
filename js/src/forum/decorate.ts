@@ -1,22 +1,13 @@
 import app from 'flarum/common/app';
 import extractText from 'flarum/common/utils/extractText';
 import { settings } from '../common/settings';
+import { classifyBody, isSwfUrl as isSwfLink } from '../common/swf';
 
 /** Set on an element once we have taken it over, so we never do it twice. */
 const CLAIMED = 'ruffleReady';
 
 function t(key: string): string {
   return app.translator.trans(`ernestdefoe-ruffle.forum.${key}`) as string;
-}
-
-function isSwfUrl(href: string): boolean {
-  try {
-    // Parsed, not regexed: a query string or a fragment must not stop a .swf
-    // being recognised, and `?download=x.swf` must not make one out of nothing.
-    return new URL(href, window.location.href).pathname.toLowerCase().endsWith('.swf');
-  } catch {
-    return false;
-  }
 }
 
 /**
@@ -37,7 +28,7 @@ function isSwfUrl(href: string): boolean {
  */
 function upgradeLinks(root: HTMLElement): void {
   root.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
-    if (!isSwfUrl(link.href)) return;
+    if (!isSwfLink(link.href, window.location.href)) return;
     // A link that is already inside one of our embeds is its own fallback.
     if (link.closest('.RuffleEmbed')) return;
 
@@ -157,11 +148,14 @@ async function looksLikeSwf(res: Response): Promise<string | null> {
     return null;
   }
 
-  if (head === 'FWS' || head === 'CWS' || head === 'ZWS') return null;
-
-  const type = (res.headers.get('content-type') || '').toLowerCase();
-
-  return type.includes('html') || head.startsWith('<') ? t('reason_html') : t('reason_not_swf');
+  switch (classifyBody(head, res.headers.get('content-type') || '')) {
+    case 'swf':
+      return null;
+    case 'html':
+      return t('reason_html');
+    default:
+      return t('reason_not_swf');
+  }
 }
 
 /**

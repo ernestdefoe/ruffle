@@ -3,6 +3,23 @@
 Ruffle for Flarum — play Flash (`.swf`) in posts, through a sandboxed emulator
 rather than a plugin that no longer exists.
 
+## [Unreleased]
+
+### Internal
+
+- **The three decisions that have actually been wrong are now tested.** What
+  counts as a `.swf` link, what a response body really is, and where the player
+  is fetched from all moved into `js/src/common/swf.ts`, which imports nothing
+  from Flarum and so can be exercised by `npm test` — 23 cases, including the
+  ones that bit: a `.swf` named in a query string is not a `.swf` link, and a
+  correct `content-type` does not make a body a movie.
+
+### Fixed
+
+- Choosing a self-hosted player and leaving the address blank (or filling it
+  with spaces) produced `/ruffle.js` against the forum's own root. It now falls
+  back to the CDN, which is what an unfilled setting means.
+
 ## [0.1.4] — 2026-09-23
 
 ### Fixed

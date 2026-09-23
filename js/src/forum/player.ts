@@ -1,4 +1,5 @@
 import { settings, type RuffleSettings } from '../common/settings';
+import { ruffleScriptUrl } from '../common/swf';
 
 /**
  * Everything that talks to Ruffle lives behind this module, and nothing imports
@@ -54,11 +55,7 @@ declare global {
  * "it worked last week" reports that cannot be reproduced.
  */
 function scriptUrl(config: RuffleSettings): string {
-  if (config.source === 'self' && config.path) {
-    return config.path.replace(/\/+$/, '') + '/ruffle.js';
-  }
-
-  return `https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle@${encodeURIComponent(config.version)}/ruffle.js`;
+  return ruffleScriptUrl(config.source, config.version, config.path);
 }
 
 let loading: Promise<RuffleApi> | null = null;
