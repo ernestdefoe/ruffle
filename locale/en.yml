@@ -22,6 +22,8 @@ ernestdefoe-ruffle:
     reason_cors: The file is on another site, and that site does not let this forum read it — it needs to send an Access-Control-Allow-Origin header. (The file may also simply no longer be there; from here the two look identical.) Hosting the file on this forum's own domain avoids the problem entirely.
     reason_unreachable: The address could not be reached at all. Check that it is correct and that the site is up.
     reason_unknown: The file was readable, so the movie itself may be damaged or in a format Ruffle cannot play yet.
+    reason_html: The address answered with a web page rather than a Flash movie. Many hosts block .swf downloads by default, and some answer a missing file with a page instead of an error — open the address directly to see what comes back.
+    reason_not_swf: The address answered, but what came back is not a Flash movie — it does not begin with FWS, CWS or ZWS. Check that the link points at the .swf itself and not at a page about it.
 
     composer:
       button: Flash movie

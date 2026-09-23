@@ -106,7 +106,7 @@ async function diagnose(url: string): Promise<string | null> {
      */
     const res = await fetch(url);
 
-    if (res.ok) return null;
+    if (res.ok) return await looksLikeSwf(res);
 
     /*
      * 🚨 `extractText`, not a cast. A translation with a parameter comes back
@@ -129,6 +129,39 @@ async function diagnose(url: string): Promise<string | null> {
       return t('reason_unreachable');
     }
   }
+}
+
+/**
+ * Is what came back actually a Flash movie?
+ *
+ * 🚨 A readable URL is not a readable MOVIE, and assuming it was left the worst
+ * possible gap: the fetch succeeded, this function said nothing was wrong, the
+ * player started, and Ruffle put up its own "failed to fetch" panel — so the
+ * whole diagnosis was skipped in precisely the case it could not explain. The
+ * first person to hit it reported the same error for a same-origin file, where
+ * the CORS advice we were giving is simply wrong.
+ *
+ * Every SWF begins with `FWS` (uncompressed), `CWS` (zlib) or `ZWS` (LZMA).
+ * Three bytes settle it, and the common causes announce themselves: a host that
+ * blocks .swf downloads, a soft 404, or a login wall all answer 200 with HTML.
+ */
+async function looksLikeSwf(res: Response): Promise<string | null> {
+  let head: string;
+
+  try {
+    const buf = await res.clone().arrayBuffer();
+    head = String.fromCharCode(...new Uint8Array(buf.slice(0, 3)));
+  } catch {
+    // Unreadable body, but the request itself was fine — say nothing rather
+    // than invent a cause.
+    return null;
+  }
+
+  if (head === 'FWS' || head === 'CWS' || head === 'ZWS') return null;
+
+  const type = (res.headers.get('content-type') || '').toLowerCase();
+
+  return type.includes('html') || head.startsWith('<') ? t('reason_html') : t('reason_not_swf');
 }
 
 /**

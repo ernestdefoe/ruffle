@@ -3,6 +3,25 @@
 Ruffle for Flarum — play Flash (`.swf`) in posts, through a sandboxed emulator
 rather than a plugin that no longer exists.
 
+## [0.1.4] — 2026-09-23
+
+### Fixed
+
+- **The diagnosis was skipped in the one case it could not explain.** 0.1.2
+  checked that the file could be fetched and, if it could, handed straight over
+  to Ruffle — which then put up its own "failed to fetch the SWF" panel anyway.
+  So a URL that answers perfectly well but is not a movie produced exactly the
+  error the new message existed to replace, and the CORS advice it *did* give
+  was wrong for same-origin files.
+
+  The check now reads the first three bytes. Every SWF starts with `FWS`, `CWS`
+  or `ZWS`, and the usual culprits announce themselves: a host that blocks
+  `.swf` downloads, a soft 404, or a login wall all answer 200 with HTML.
+
+  Verified same-origin against a real movie (plays), a URL answering with a web
+  page, a URL answering with something that is not a movie, and a genuine 404 —
+  each naming its own cause.
+
 ## [0.1.3] — 2026-09-23
 
 ### Fixed
