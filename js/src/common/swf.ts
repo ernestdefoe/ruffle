@@ -49,6 +49,40 @@ export function classifyBody(head: string, contentType: string): BodyKind {
 }
 
 /**
+ * Shrink a movie to fit inside an admin's ceiling, keeping its shape.
+ *
+ * 🚨 Scaled, not truncated. Clamping each side independently turns a 1600x400
+ * banner into an 800x400 one — a different movie, squashed, and Ruffle then
+ * letterboxes the result inside the wrong box. The whole point of a size on an
+ * embed is its aspect ratio; a ceiling should make it smaller, not reshape it.
+ *
+ * A limit of 0 (or anything not positive) means "no limit", so an admin who
+ * only wants to cap the height does not have to invent a width.
+ *
+ * Rounded, and never below 1: a ceiling of 1 against a very wide movie would
+ * otherwise produce a height of 0 and an embed with no box at all.
+ */
+export function fitWithin(
+  width: number,
+  height: number,
+  maxWidth: number,
+  maxHeight: number
+): { width: number; height: number } {
+  const scale = Math.min(
+    maxWidth > 0 ? maxWidth / width : 1,
+    maxHeight > 0 ? maxHeight / height : 1,
+    1 // never enlarge — a ceiling is not a target
+  );
+
+  if (scale >= 1) return { width, height };
+
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
+}
+
+/**
  * Where ruffle.js is fetched from.
  *
  * 🚨 Version-pinned, never `latest`. Ruffle emulates a twenty-year-old format

@@ -122,6 +122,7 @@ of these it is, rather than leaving you with Ruffle's generic message.
 | **Network access** | None / same movie only / unrestricted. None by default |
 | **When a movie starts** | On press (default), automatically, or always |
 | **Default size** | 550 × 400 — Flash's own default stage |
+| **Largest allowed size** | A ceiling on what members can post. 0 = no limit |
 | **Turn plain `.swf` links into players** | On by default |
 
 ## Works with Scribe

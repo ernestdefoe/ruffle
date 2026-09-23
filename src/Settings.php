@@ -42,6 +42,13 @@ abstract class Settings
         // Flash's own default stage, and still the right guess for most files.
         'width' => 550,
         'height' => 400,
+        /*
+         * A ceiling on what a member can post, in pixels. 0 is no limit, which
+         * is what every existing forum gets — a new setting must not quietly
+         * resize everything already written.
+         */
+        'maxWidth' => 0,
+        'maxHeight' => 0,
         // Turn a plain link to a .swf into a player. Done in the browser, not
         // the formatter — see js/src/forum/upgradeLinks.ts for why.
         'upgradeLinks' => true,
@@ -57,6 +64,8 @@ abstract class Settings
         'allowNetworking' => 'string',
         'width' => 'int',
         'height' => 'int',
+        'maxWidth' => 'int',
+        'maxHeight' => 'int',
         'upgradeLinks' => 'bool',
     ];
 

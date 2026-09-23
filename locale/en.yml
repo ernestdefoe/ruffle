@@ -96,6 +96,14 @@ ernestdefoe-ruffle:
         Used when a post does not give a size. 550 × 400 was Flash's own
         default stage.
 
+      max_width_label: Largest allowed width
+      max_height_label: Largest allowed height
+      max_help: >
+        A ceiling on what members can post, in pixels. 0 means no limit.
+        Anything bigger is scaled down to fit rather than squashed, so it keeps
+        its shape — and this is a display rule, so raising the limit later
+        restores the posts to full size.
+
       links_heading: Links
       upgrade_links_label: Turn plain links to .swf files into players
       upgrade_links_help: >

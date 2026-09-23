@@ -1,7 +1,7 @@
 import app from 'flarum/common/app';
 import extractText from 'flarum/common/utils/extractText';
 import { settings } from '../common/settings';
-import { classifyBody, isSwfUrl as isSwfLink } from '../common/swf';
+import { classifyBody, fitWithin, isSwfUrl as isSwfLink } from '../common/swf';
 
 /** Set on an element once we have taken it over, so we never do it twice. */
 const CLAIMED = 'ruffleReady';
@@ -41,15 +41,29 @@ function upgradeLinks(root: HTMLElement): void {
   });
 }
 
+/**
+ * The box this embed gets: what the post asked for, then the forum's ceiling.
+ *
+ * 🚨 Applied here rather than in the formatter, so it is a display rule and not
+ * a rewrite. An admin who lowers the ceiling sees every existing embed shrink
+ * on the next page load, and one who raises it gets them back — the posts
+ * themselves still say what their authors wrote.
+ *
+ * The ceiling also applies to the DEFAULT size, not just to sizes a post asked
+ * for; a maximum smaller than the default would otherwise be ignored by every
+ * post that named no size at all.
+ */
 function size(embed: HTMLElement): { width: number; height: number } {
   const config = settings();
   const width = parseInt(embed.dataset.width || '', 10);
   const height = parseInt(embed.dataset.height || '', 10);
 
-  return {
-    width: Number.isFinite(width) && width > 0 ? width : config.width,
-    height: Number.isFinite(height) && height > 0 ? height : config.height,
-  };
+  return fitWithin(
+    Number.isFinite(width) && width > 0 ? width : config.width,
+    Number.isFinite(height) && height > 0 ? height : config.height,
+    config.maxWidth,
+    config.maxHeight
+  );
 }
 
 /**

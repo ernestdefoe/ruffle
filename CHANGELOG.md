@@ -3,6 +3,23 @@
 Ruffle for Flarum — play Flash (`.swf`) in posts, through a sandboxed emulator
 rather than a plugin that no longer exists.
 
+## [0.3.0] — 2026-09-23
+
+### Added
+
+- **A largest allowed width and height**, so a member cannot post a movie that
+  takes over a thread. Requested by **@FlashPulse**. 0 means no limit, which is
+  what every existing forum keeps — a new ceiling must not silently resize
+  everything already written.
+
+  🚨 Oversized movies are **scaled**, not truncated. Capping each side
+  independently would turn a 1600×400 banner into 800×400 — a different movie,
+  squashed — so the ceiling shrinks it to 800×200 and it keeps its shape.
+
+  It is a display rule rather than a rewrite: lower the ceiling and every
+  existing embed shrinks on the next page load; raise it and they come back.
+  The posts still say what their authors wrote.
+
 ## [0.2.0] — 2026-09-23
 
 ### Added

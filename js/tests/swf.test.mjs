@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { isSwfUrl, classifyBody, ruffleScriptUrl } from '../../.test-build/swf.js';
+import { isSwfUrl, classifyBody, ruffleScriptUrl, fitWithin } from '../../.test-build/swf.js';
 
 let failed = 0;
 const it = (name, fn) => {
@@ -77,6 +77,26 @@ it('a version is escaped into the url', () =>
       '@0.7.0-nightly.2026.9.22/ruffle.js'
     )
   ));
+
+console.log('fitWithin');
+const fit = (w, h, mw, mh) => {
+  const r = fitWithin(w, h, mw, mh);
+  return r.width + 'x' + r.height;
+};
+it('no limits leaves it alone', () => assert.equal(fit(800, 600, 0, 0), '800x600'));
+it('already inside the limit is untouched', () => assert.equal(fit(400, 300, 800, 600), '400x300'));
+it('a ceiling never enlarges', () => assert.equal(fit(200, 150, 1600, 1200), '200x150'));
+it('exactly on the limit', () => assert.equal(fit(800, 600, 800, 600), '800x600'));
+// The point of the whole function: shape is preserved.
+it('too wide scales both sides', () => assert.equal(fit(1600, 1200, 800, 0), '800x600'));
+it('too tall scales both sides', () => assert.equal(fit(1600, 1200, 0, 600), '800x600'));
+it('the tighter of the two wins', () => assert.equal(fit(1000, 1000, 800, 500), '500x500'));
+it('a wide banner keeps its shape', () => assert.equal(fit(1600, 400, 800, 0), '800x200'));
+it('height-only cap on a wide banner', () => assert.equal(fit(1600, 400, 0, 200), '800x200'));
+it('a negative limit means no limit', () => assert.equal(fit(800, 600, -1, -1), '800x600'));
+// A ceiling of 1 must not produce a zero-height box.
+it('an absurd ceiling still leaves a box', () => assert.equal(fit(1600, 400, 1, 0), '1x1'));
+it('rounding stays proportional', () => assert.equal(fit(1023, 767, 500, 0), '500x375'));
 
 console.log(failed ? `\n${failed} failing` : '\nall passing');
 process.exit(failed ? 1 : 0);

@@ -117,6 +117,21 @@ export default [
       min: 1,
       default: 400,
     }))
+    .setting(() => ({
+      setting: key('maxWidth'),
+      label: t('max_width_label'),
+      type: 'number',
+      min: 0,
+      default: 0,
+    }))
+    .setting(() => ({
+      setting: key('maxHeight'),
+      label: t('max_height_label'),
+      help: t('max_help'),
+      type: 'number',
+      min: 0,
+      default: 0,
+    }))
 
     // ---- links -----------------------------------------------------------
     .setting(() => ({

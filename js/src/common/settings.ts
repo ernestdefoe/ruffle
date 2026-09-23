@@ -12,6 +12,8 @@ export interface RuffleSettings {
   allowNetworking: Networking;
   width: number;
   height: number;
+  maxWidth: number;
+  maxHeight: number;
   upgradeLinks: boolean;
 }
 
@@ -32,6 +34,9 @@ export const DEFAULTS: RuffleSettings = {
   allowNetworking: 'none',
   width: 550,
   height: 400,
+  // 0 is no limit. A new ceiling must not silently resize every existing post.
+  maxWidth: 0,
+  maxHeight: 0,
   upgradeLinks: true,
 };
 
@@ -60,6 +65,8 @@ export function settings(): RuffleSettings {
     allowNetworking: read('allowNetworking'),
     width: read('width'),
     height: read('height'),
+    maxWidth: read('maxWidth'),
+    maxHeight: read('maxHeight'),
     upgradeLinks: read('upgradeLinks'),
   };
 }
