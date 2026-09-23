@@ -3,7 +3,23 @@
 Ruffle for Flarum — play Flash (`.swf`) in posts, through a sandboxed emulator
 rather than a plugin that no longer exists.
 
-## [Unreleased]
+## [0.1.1] — 2026-09-23
+
+### Fixed
+
+- **The settings page never loaded, and the AdminCP only said "ernestdefoe/ruffle
+  failed to initialize".** Settings were registered through
+  `app.extensionData` — the Flarum 1.x API, which is absent in Flarum 2, not
+  deprecated. Calling it threw inside the initializer, core caught that per
+  extension, and the real cause was visible only in the browser console. The
+  forum side was unaffected throughout: posts rendered, players played. Settings
+  now go through the `Admin` extender, which is the Flarum 2 way.
+
+🚨 **Upgrading requires `php flarum cache:clear`.** Flarum serves one compiled
+`assets/admin.js` for the whole forum and will keep serving the old one
+otherwise — the extension looks unchanged and the error persists.
+
+## [0.1.0] — 2026-09-23
 
 Initial release.
 
