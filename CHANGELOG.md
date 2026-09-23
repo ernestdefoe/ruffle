@@ -3,6 +3,27 @@
 Ruffle for Flarum — play Flash (`.swf`) in posts, through a sandboxed emulator
 rather than a plugin that no longer exists.
 
+## [0.1.3] — 2026-09-23
+
+### Fixed
+
+- **No way to insert a movie on a forum running Scribe 1.1.x.** The composer
+  button for Flarum's own editor was skipped whenever Scribe was *installed*,
+  on the assumption that Scribe's own toolbar would supply one. Scribe only
+  gained a registry to supply it with in 1.2.0 — so on every Scribe forum until
+  then, our button was suppressed in one editor and never added to the other.
+  Nothing errored. The feature was simply absent, which is the hardest kind of
+  gap to spot because each half works.
+
+  The condition now asks whether Scribe's editor is actually *running* — which
+  is a different question from whether it is installed, and also covers Scribe
+  standing its editor down when flarum/markdown or fof/rich-text is enabled.
+
+  Verified in all three arrangements: Scribe 1.2.0 active (button in Scribe's
+  toolbar, not duplicated in core's), Scribe absent (button in core's toolbar),
+  and Scribe installed but stood down by markdown (button in core's toolbar,
+  alongside markdown's own).
+
 ## [0.1.2] — 2026-09-23
 
 ### Fixed

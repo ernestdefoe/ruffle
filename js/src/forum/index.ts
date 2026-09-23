@@ -5,7 +5,7 @@ import CommentPost from 'flarum/forum/components/CommentPost';
 import TextEditor from 'flarum/common/components/TextEditor';
 import TextEditorButton from 'flarum/common/components/TextEditorButton';
 import decorate from './decorate';
-import registerWithScribe, { scribeEnabled } from './scribe';
+import registerWithScribe, { scribeEditorActive } from './scribe';
 import InsertFlashModal from './InsertFlashModal';
 
 export { default as decorate } from './decorate';
@@ -29,11 +29,14 @@ app.initializers.add('ernestdefoe/ruffle', () => {
   });
 
   /*
-   * The composer button for Flarum's own editor. Scribe gets its own, through
-   * Scribe's registry — adding both would put two buttons that do the same
-   * thing side by side in the same toolbar.
+   * The composer button for Flarum's own editor.
+   *
+   * Added unless Scribe's editor is actually running, in which case Scribe's
+   * own registry supplies the button and adding this one too would put two
+   * controls that do the same thing side by side. "Actually running" is a
+   * different question from "installed" — see scribeEditorActive().
    */
-  if (!scribeEnabled()) {
+  if (!scribeEditorActive()) {
     extend(TextEditor.prototype, 'toolbarItems', function (this: any, items: ItemList<any>) {
       items.add(
         'ruffleFlash',

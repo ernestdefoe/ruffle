@@ -32,7 +32,10 @@ interface ScribeApi {
 }
 
 declare const flarum: {
-  reg: { onLoad(namespace: string, id: string, handler: (module: any) => void): void };
+  reg: {
+    onLoad(namespace: string, id: string, handler: (module: any) => void): void;
+    checkModule(namespace: string, id: string): any | false;
+  };
   extensions: Record<string, unknown>;
 };
 
@@ -133,11 +136,35 @@ export default function registerWithScribe(): void {
 }
 
 /**
- * Whether Scribe is the editor in play.
+ * Whether Scribe's editor is actually in play — which is NOT the same question
+ * as whether Scribe is installed.
  *
- * Used to decide which composer button to add: adding both would put two
- * buttons that do the same thing in the same toolbar.
+ * 🚨 This used to ask `'ernestdefoe-scribe' in flarum.extensions`, and that is
+ * wrong in two situations that between them cover most Scribe forums:
+ *
+ *  - Scribe stands its EDITOR down when flarum/markdown or fof/rich-text is
+ *    enabled — its whole frontend bundle is then never loaded (an
+ *    `Extend\Conditional` in its extend.php). The extension is still listed as
+ *    enabled, so the old check said "Scribe has this covered" while Scribe's
+ *    JS was not on the page at all.
+ *  - Scribe before 1.2.0 has no registry to register a button with.
+ *
+ * In both cases the old check skipped our own toolbar button AND no Scribe
+ * button ever appeared, so there was no way to insert a movie from anywhere.
+ * Nothing errored; the feature was simply absent, which is the hardest kind of
+ * gap to notice because every individual piece works.
+ *
+ * Asking whether Scribe's registry actually LOADED answers the real question,
+ * because Scribe's bundle loading is precisely what "Scribe's editor is
+ * active" means.
+ *
+ * 🚨 `checkModule`, not `get`. `flarum.reg.get()` THROWS for a missing module
+ * when the extension is enabled and `flarum.debug` is on — so probing with it
+ * would take down our initializer on exactly the forums where Scribe is
+ * installed but stood down.
  */
-export function scribeEnabled(): boolean {
-  return typeof flarum !== 'undefined' && SCRIBE in (flarum.extensions ?? {});
+export function scribeEditorActive(): boolean {
+  if (typeof flarum === 'undefined' || !flarum.reg) return false;
+
+  return flarum.reg.checkModule(SCRIBE, REGISTRY) !== false;
 }

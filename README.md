@@ -116,8 +116,10 @@ Markdown, so it needs its own integration — and it has one. Install both and a
 the document, shown as a card rather than a broken plugin box, and saved as an
 `<embed>` element that the server understands.
 
-Scribe 1.2 or later is required for the toolbar button. Older versions still
-render posts containing Flash correctly; they just cannot insert one.
+Scribe 1.2.0 or later is required for the button to appear *in Scribe's*
+toolbar — that is the release that added the registry it hooks into. On older
+Scribe the button appears in Flarum's own toolbar instead, so there is always a
+way to insert a movie. Either way, posts containing Flash render correctly.
 
 ## How it actually works
 
