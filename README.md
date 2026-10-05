@@ -24,7 +24,9 @@ What a `.swf` can still do is talk to the page it is embedded in and open
 connections of its own — ActionScript's `ExternalInterface`, `navigateToURL`,
 `Socket`. Those are the sandbox's own doors, and on a forum the files come from
 members. **Both are shut by default here**, and an admin who runs their own
-archive can open them deliberately.
+archive can open them deliberately. Even then, only movies served from the
+sites the admin lists may call JavaScript; a movie from anywhere else stays
+sandboxed.
 
 ## What you get
 
@@ -118,7 +120,7 @@ of these it is, rather than leaving you with Ruffle's generic message.
 | --- | --- |
 | **Where the player is loaded from** | jsDelivr, or a copy you host |
 | **Ruffle version** | Pinned. Change it deliberately |
-| **Let movies call JavaScript** | `ExternalInterface`. Off by default |
+| **Let movies call JavaScript** | `ExternalInterface`. Off by default, and only for movies from sites you list |
 | **Network access** | None / same movie only / unrestricted. None by default |
 | **When a movie starts** | On press (default), automatically, or always |
 | **Default size** | 550 × 400 — Flash's own default stage |

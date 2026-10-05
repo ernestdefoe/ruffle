@@ -1,5 +1,6 @@
 import app from 'flarum/admin/app';
 import Admin from 'flarum/common/extenders/Admin';
+import Alert from 'flarum/common/components/Alert';
 
 /*
  * `m` is a global on a Flarum page, not a module. Importing 'mithril' makes
@@ -75,6 +76,25 @@ export default [
       label: t('allow_script_access_label'),
       help: t('allow_script_access_help'),
       type: 'boolean',
+    }))
+    /*
+     * Shown while the switch is on: it hands script in the forum's own origin
+     * to whoever made the movie, and an admin should not be able to miss that.
+     */
+    .customSetting(function (this: any) {
+      const on = this.setting(key('allowScriptAccess'))();
+      if (!on || on === '0') return null;
+      return m(
+        '.Form-group',
+        m(Alert, { type: 'error', dismissible: false }, t('allow_script_access_warning'))
+      );
+    })
+    .setting(() => ({
+      setting: key('scriptAccessHosts'),
+      label: t('script_access_hosts_label'),
+      help: t('script_access_hosts_help'),
+      placeholder: t('script_access_hosts_placeholder'),
+      type: 'textarea',
     }))
     .setting(() => ({
       setting: key('allowNetworking'),

@@ -9,6 +9,7 @@ export interface RuffleSettings {
   path: string;
   autoplay: Autoplay;
   allowScriptAccess: boolean;
+  scriptAccessHosts: string;
   allowNetworking: Networking;
   width: number;
   height: number;
@@ -31,6 +32,7 @@ export const DEFAULTS: RuffleSettings = {
   path: '',
   autoplay: 'click',
   allowScriptAccess: false,
+  scriptAccessHosts: '',
   allowNetworking: 'none',
   width: 550,
   height: 400,
@@ -62,6 +64,7 @@ export function settings(): RuffleSettings {
     path: read('path'),
     autoplay: read('autoplay'),
     allowScriptAccess: read('allowScriptAccess'),
+    scriptAccessHosts: read('scriptAccessHosts'),
     allowNetworking: read('allowNetworking'),
     width: read('width'),
     height: read('height'),

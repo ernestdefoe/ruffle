@@ -72,8 +72,18 @@ ernestdefoe-ruffle:
       safety_heading: What a movie is allowed to do
       allow_script_access_label: Let movies call JavaScript on the page
       allow_script_access_help: >
-        ActionScript's ExternalInterface. Off unless every .swf on your forum
-        is one you put there yourself.
+        ActionScript's ExternalInterface. Only movies served from the sites
+        listed below get it; every other movie stays sandboxed.
+      allow_script_access_warning: >
+        A movie with this permission runs JavaScript as your forum, with the
+        reader's session: it can post, message and change settings as whoever
+        is watching. Only list sites where nobody but you can put a .swf, never
+        a host your members can upload to.
+      script_access_hosts_label: Sites whose movies may call JavaScript
+      script_access_hosts_help: >
+        One hostname per line, exactly as it appears in the movie's address.
+        Empty means no movie gets it, even with the switch on.
+      script_access_hosts_placeholder: games.your-forum.example
       allow_networking_label: Network access
       allow_networking_none: None
       allow_networking_internal: Same movie only

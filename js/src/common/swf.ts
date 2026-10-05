@@ -83,6 +83,34 @@ export function fitWithin(
 }
 
 /**
+ * 🚨 Whether THIS movie may call JavaScript on the page.
+ *
+ * ExternalInterface runs script in the forum's own origin, and any member can
+ * post a .swf from any address — so the admin switch alone would be stored XSS
+ * by configuration. It only applies to movies served from a host the admin has
+ * listed (exact hostname, http/https only). An empty list means no movie.
+ */
+export function scriptAccessAllowed(
+  enabled: boolean,
+  hosts: string,
+  url: string,
+  base: string
+): boolean {
+  if (!enabled || !hosts) return false;
+  try {
+    const u = new URL(url, base);
+    if (u.protocol !== 'https:' && u.protocol !== 'http:') return false;
+    const allowed = hosts
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .filter(Boolean);
+    return allowed.includes(u.hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Where ruffle.js is fetched from.
  *
  * 🚨 Version-pinned, never `latest`. Ruffle emulates a twenty-year-old format

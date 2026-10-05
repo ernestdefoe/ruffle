@@ -38,6 +38,13 @@ abstract class Settings
         // 'click' (Ruffle's "off" — a poster the reader presses), 'auto', 'on'.
         'autoplay' => 'click',
         'allowScriptAccess' => false,
+        /*
+         * Even with allowScriptAccess on, only movies served from these hosts
+         * (one per line or comma-separated) may call JavaScript. Empty means
+         * none: a member can post a .swf from anywhere, so "on" alone would be
+         * stored XSS by configuration.
+         */
+        'scriptAccessHosts' => '',
         'allowNetworking' => 'none',
         // Flash's own default stage, and still the right guess for most files.
         'width' => 550,
@@ -61,6 +68,7 @@ abstract class Settings
         'path' => 'string',
         'autoplay' => 'string',
         'allowScriptAccess' => 'bool',
+        'scriptAccessHosts' => 'string',
         'allowNetworking' => 'string',
         'width' => 'int',
         'height' => 'int',

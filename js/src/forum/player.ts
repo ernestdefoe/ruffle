@@ -1,5 +1,5 @@
 import { settings, type RuffleSettings } from '../common/settings';
-import { ruffleScriptUrl } from '../common/swf';
+import { ruffleScriptUrl, scriptAccessAllowed } from '../common/swf';
 
 /**
  * Everything that talks to Ruffle lives behind this module, and nothing imports
@@ -163,7 +163,12 @@ async function loadMovie(
 ): Promise<void> {
   await player.ruffle().load({
     url,
-    allowScriptAccess: config.allowScriptAccess,
+    allowScriptAccess: scriptAccessAllowed(
+      config.allowScriptAccess,
+      config.scriptAccessHosts,
+      url,
+      location.href
+    ),
     allowNetworking: config.allowNetworking,
     /*
      * 🚨 Always 'on', never Ruffle's 'off', and the difference is a bug you

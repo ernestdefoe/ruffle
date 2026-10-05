@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { isSwfUrl, classifyBody, ruffleScriptUrl, fitWithin } from '../../.test-build/swf.js';
+import { isSwfUrl, classifyBody, ruffleScriptUrl, fitWithin, scriptAccessAllowed } from '../../.test-build/swf.js';
 
 let failed = 0;
 const it = (name, fn) => {
@@ -97,6 +97,19 @@ it('a negative limit means no limit', () => assert.equal(fit(800, 600, -1, -1), 
 // A ceiling of 1 must not produce a zero-height box.
 it('an absurd ceiling still leaves a box', () => assert.equal(fit(1600, 400, 1, 0), '1x1'));
 it('rounding stays proportional', () => assert.equal(fit(1023, 767, 500, 0), '500x375'));
+
+console.log('scriptAccessAllowed');
+const sa = (on, hosts, url) => scriptAccessAllowed(on, hosts, url, BASE);
+// The hole: the switch alone used to hand ExternalInterface to ANY member's movie.
+it('switch on, no hosts listed: nobody gets it', () => assert.equal(sa(true, '', 'https://evil.example/x.swf'), false));
+it('switch on, movie from an unlisted host', () => assert.equal(sa(true, 'games.forum.example', 'https://evil.example/x.swf'), false));
+it('switch on, movie from a listed host', () => assert.equal(sa(true, 'games.forum.example', 'https://games.forum.example/x.swf'), true));
+it('switch off beats the list', () => assert.equal(sa(false, 'games.forum.example', 'https://games.forum.example/x.swf'), false));
+it('a lookalike subdomain is not the host', () => assert.equal(sa(true, 'forum.example', 'https://forum.example.evil.example/x.swf'), false));
+it('a listed name in the path is not the host', () => assert.equal(sa(true, 'games.forum.example', 'https://evil.example/games.forum.example/x.swf'), false));
+it('comma and newline separated, any case', () => assert.equal(sa(true, 'a.example,\n GAMES.forum.example', 'https://games.FORUM.example/x.swf'), true));
+it('a relative movie resolves against the page', () => assert.equal(sa(true, 'forum.example', '/files/x.swf'), true));
+it('a non-http scheme never', () => assert.equal(sa(true, 'forum.example', 'data:application/x-shockwave-flash,FWS'), false));
 
 console.log(failed ? `\n${failed} failing` : '\nall passing');
 process.exit(failed ? 1 : 0);
