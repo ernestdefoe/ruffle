@@ -1,5 +1,4 @@
 import app from 'flarum/common/app';
-import InsertFlashModal from './InsertFlashModal';
 
 /**
  * Registration with Scribe, if Scribe is there.
@@ -129,7 +128,7 @@ export default function registerWithScribe(): void {
       translationKey: 'ernestdefoe-ruffle.forum.composer.button',
       active: (editor: any) => editor.isActive('ruffleFlash'),
       run: (editor: any) => {
-        app.modal.show(InsertFlashModal, {
+        app.modal.show(() => import('./InsertFlashModal'), {
           onsubmit: (movie: {
             url: string;
             width: number;

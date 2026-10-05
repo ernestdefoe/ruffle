@@ -6,7 +6,6 @@ import TextEditor from 'flarum/common/components/TextEditor';
 import TextEditorButton from 'flarum/common/components/TextEditorButton';
 import decorate from './decorate';
 import registerWithScribe, { scribeEditorActive } from './scribe';
-import InsertFlashModal from './InsertFlashModal';
 
 export { default as decorate } from './decorate';
 
@@ -44,7 +43,7 @@ app.initializers.add('ernestdefoe/ruffle', () => {
           {
             icon: 'fas fa-bolt',
             onclick: () =>
-              app.modal.show(InsertFlashModal, {
+              app.modal.show(() => import('./InsertFlashModal'), {
                 onsubmit: (movie: {
                   url: string;
                   width: number;
