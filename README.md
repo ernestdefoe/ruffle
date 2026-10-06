@@ -156,6 +156,11 @@ on the first press. A page with no Flash on it costs about 10 KB.
 - Flarum 2.0
 - PHP 8.3+
 
+## Support
+
+- **Support forum:** [Ruffle on ernestdefoe.online](https://ernestdefoe.online/d/102)
+- **Bug reports:** [GitHub issues](https://github.com/ernestdefoe/ruffle/issues)
+
 ## Licence
 
 MIT. Ruffle itself is MIT OR Apache-2.0 and is not bundled — it is fetched at
