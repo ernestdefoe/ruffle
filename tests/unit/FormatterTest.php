@@ -1,6 +1,6 @@
 <?php
 
-namespace ErnestDefoe\Ruffle\Tests;
+namespace ErnestDefoe\Ruffle\Tests\unit;
 
 use ErnestDefoe\Ruffle\Formatter\Configure;
 use Flarum\Extension\ExtensionManager;
@@ -34,11 +34,11 @@ class FormatterTest extends TestCase
         $config->plugins->load('Escaper');
         $config->plugins->load('Litedown');
 
-        $extensions = $this->createMock(ExtensionManager::class);
+        $extensions = $this->createStub(ExtensionManager::class);
         $extensions->method('isEnabled')
             ->willReturnCallback(fn (string $id) => $scribeEnabled && $id === 'ernestdefoe-scribe');
 
-        $translator = $this->createMock(TranslatorInterface::class);
+        $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
 
         (new Configure($extensions, $translator))($config);
@@ -85,7 +85,13 @@ class FormatterTest extends TestCase
      * BBCode's own start tag and breaks it apart. The player showing up is why
      * this was easy to miss.
      */
-    #[DataProvider('bbcodeProvider')]
+    /** The same posts, without the sizes the embed test checks. */
+    public static function bbcodeTextProvider(): array
+    {
+        return array_map(fn (array $case) => [$case[0]], self::bbcodeProvider());
+    }
+
+    #[DataProvider('bbcodeTextProvider')]
     public function test_no_bbcode_markup_survives_into_the_post(string $text): void
     {
         $this->assertDoesNotMatchRegularExpression('~\[/?swf~', $this->render($text));
@@ -224,9 +230,9 @@ class FormatterTest extends TestCase
         $other = $config->tags->add(Configure::TAG);
         $other->template = '<p class="SomebodyElse"/>';
 
-        $extensions = $this->createMock(ExtensionManager::class);
+        $extensions = $this->createStub(ExtensionManager::class);
         $extensions->method('isEnabled')->willReturn(false);
-        $translator = $this->createMock(TranslatorInterface::class);
+        $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
 
         (new Configure($extensions, $translator))($config);
