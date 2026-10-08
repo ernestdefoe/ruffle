@@ -62,12 +62,7 @@ export function classifyBody(head: string, contentType: string): BodyKind {
  * Rounded, and never below 1: a ceiling of 1 against a very wide movie would
  * otherwise produce a height of 0 and an embed with no box at all.
  */
-export function fitWithin(
-  width: number,
-  height: number,
-  maxWidth: number,
-  maxHeight: number
-): { width: number; height: number } {
+export function fitWithin(width: number, height: number, maxWidth: number, maxHeight: number): { width: number; height: number } {
   const scale = Math.min(
     maxWidth > 0 ? maxWidth / width : 1,
     maxHeight > 0 ? maxHeight / height : 1,
@@ -90,12 +85,7 @@ export function fitWithin(
  * by configuration. It only applies to movies served from a host the admin has
  * listed (exact hostname, http/https only). An empty list means no movie.
  */
-export function scriptAccessAllowed(
-  enabled: boolean,
-  hosts: string,
-  url: string,
-  base: string
-): boolean {
+export function scriptAccessAllowed(enabled: boolean, hosts: string, url: string, base: string): boolean {
   if (!enabled || !hosts) return false;
   try {
     const u = new URL(url, base);

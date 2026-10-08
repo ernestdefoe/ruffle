@@ -129,12 +129,7 @@ export default function registerWithScribe(): void {
       active: (editor: any) => editor.isActive('ruffleFlash'),
       run: (editor: any) => {
         app.modal.show(() => import('./InsertFlashModal'), {
-          onsubmit: (movie: {
-            url: string;
-            width: number;
-            height: number;
-            poster: string;
-          }) => {
+          onsubmit: (movie: { url: string; width: number; height: number; poster: string }) => {
             editor
               .chain()
               .focus()

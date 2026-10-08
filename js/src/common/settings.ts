@@ -51,9 +51,7 @@ export const DEFAULTS: RuffleSettings = {
  */
 export function settings(): RuffleSettings {
   const read = <K extends keyof RuffleSettings>(key: K): RuffleSettings[K] => {
-    const value = app.forum?.attribute<RuffleSettings[K]>(
-      'ruffle' + key.charAt(0).toUpperCase() + key.slice(1)
-    );
+    const value = app.forum?.attribute<RuffleSettings[K]>('ruffle' + key.charAt(0).toUpperCase() + key.slice(1));
 
     return value === undefined || value === null ? DEFAULTS[key] : value;
   };

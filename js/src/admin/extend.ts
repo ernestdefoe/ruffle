@@ -84,10 +84,7 @@ export default [
     .customSetting(function (this: any) {
       const on = this.setting(key('allowScriptAccess'))();
       if (!on || on === '0') return null;
-      return m(
-        '.Form-group',
-        m(Alert, { type: 'error', dismissible: false }, t('allow_script_access_warning'))
-      );
+      return m('.Form-group', m(Alert, { type: 'error', dismissible: false }, t('allow_script_access_warning')));
     })
     .setting(() => ({
       setting: key('scriptAccessHosts'),
@@ -162,10 +159,6 @@ export default [
     }))
 
     .customSetting(function () {
-      return m(
-        '.Form-group.RuffleSettings-how',
-        m('label', t('how_heading')),
-        m('.helpText', t('how_body'))
-      );
+      return m('.Form-group.RuffleSettings-how', m('label', t('how_heading')), m('.helpText', t('how_body')));
     }),
 ];

@@ -44,12 +44,7 @@ app.initializers.add('ernestdefoe/ruffle', () => {
             icon: 'fas fa-bolt',
             onclick: () =>
               app.modal.show(() => import('./InsertFlashModal'), {
-                onsubmit: (movie: {
-                  url: string;
-                  width: number;
-                  height: number;
-                  poster: string;
-                }) => {
+                onsubmit: (movie: { url: string; width: number; height: number; poster: string }) => {
                   const { url, width, height } = movie;
                   /*
                    * Width and height are written out only when they differ
@@ -59,14 +54,9 @@ app.initializers.add('ernestdefoe/ruffle', () => {
                    * once — rather than having had the old default baked into
                    * each post at the moment it was written.
                    */
-                  const attrs =
-                    (width || height ? ` width=${width} height=${height}` : '') +
-                    (movie.poster ? ` poster=${movie.poster}` : '');
+                  const attrs = (width || height ? ` width=${width} height=${height}` : '') + (movie.poster ? ` poster=${movie.poster}` : '');
 
-                  this.attrs.composer.editor.insertAtCursor(
-                    `[swf${attrs}]${url}[/swf]`,
-                    false
-                  );
+                  this.attrs.composer.editor.insertAtCursor(`[swf${attrs}]${url}[/swf]`, false);
                 },
               }),
           },

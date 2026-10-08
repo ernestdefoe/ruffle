@@ -121,11 +121,7 @@ function loadRuffle(config: RuffleSettings): Promise<RuffleApi> {
  * Returns nothing and throws on failure; the caller owns what a failure looks
  * like, because only it knows what the reader was looking at before.
  */
-export async function play(
-  container: HTMLElement,
-  url: string,
-  size: { width: number; height: number }
-): Promise<void> {
+export async function play(container: HTMLElement, url: string, size: { width: number; height: number }): Promise<void> {
   const config = settings();
   const api = await loadRuffle(config);
 
@@ -155,20 +151,10 @@ export async function play(
   }
 }
 
-async function loadMovie(
-  player: RufflePlayerElement,
-  url: string,
-  size: { width: number; height: number },
-  config: RuffleSettings
-): Promise<void> {
+async function loadMovie(player: RufflePlayerElement, url: string, size: { width: number; height: number }, config: RuffleSettings): Promise<void> {
   await player.ruffle().load({
     url,
-    allowScriptAccess: scriptAccessAllowed(
-      config.allowScriptAccess,
-      config.scriptAccessHosts,
-      url,
-      location.href
-    ),
+    allowScriptAccess: scriptAccessAllowed(config.allowScriptAccess, config.scriptAccessHosts, url, location.href),
     allowNetworking: config.allowNetworking,
     /*
      * 🚨 Always 'on', never Ruffle's 'off', and the difference is a bug you

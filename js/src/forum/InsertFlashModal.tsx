@@ -51,53 +51,26 @@ export default class InsertFlashModal extends FormModal<InsertFlashAttrs> {
       <div className="Modal-body">
         <div className="Form-group">
           <label>{t('url')}</label>
-          <input
-            className="FormControl"
-            type="url"
-            inputmode="url"
-            placeholder={t('url_placeholder')}
-            bidi={this.url}
-          />
+          <input className="FormControl" type="url" inputmode="url" placeholder={t('url_placeholder')} bidi={this.url} />
         </div>
 
         <div className="Form-group">
           <label>{t('poster')}</label>
-          <input
-            className="FormControl"
-            type="url"
-            inputmode="url"
-            placeholder={t('poster_placeholder')}
-            bidi={this.poster}
-          />
+          <input className="FormControl" type="url" inputmode="url" placeholder={t('poster_placeholder')} bidi={this.poster} />
           <div className="helpText">{t('poster_help')}</div>
         </div>
 
         <div className="Form-group InsertFlashModal-size">
           <label>{t('size')}</label>
           <div className="InsertFlashModal-sizeFields">
-            <input
-              className="FormControl"
-              type="number"
-              min="1"
-              aria-label={t('width')}
-              bidi={this.width}
-            />
+            <input className="FormControl" type="number" min="1" aria-label={t('width')} bidi={this.width} />
             <span aria-hidden="true">×</span>
-            <input
-              className="FormControl"
-              type="number"
-              min="1"
-              aria-label={t('height')}
-              bidi={this.height}
-            />
+            <input className="FormControl" type="number" min="1" aria-label={t('height')} bidi={this.height} />
           </div>
         </div>
 
         <div className="Form-group">
-          {Button.component(
-            { className: 'Button Button--primary', type: 'submit', disabled: !this.url().trim() },
-            t('insert')
-          )}
+          {Button.component({ className: 'Button Button--primary', type: 'submit', disabled: !this.url().trim() }, t('insert'))}
         </div>
       </div>
     );

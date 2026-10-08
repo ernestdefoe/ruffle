@@ -118,9 +118,7 @@ async function diagnose(url: string): Promise<string | null> {
      * as an array of vnodes, not a string — casting it lands `[object Object]`
      * in the message, and only for the one line that interpolates anything.
      */
-    return extractText(
-      app.translator.trans('ernestdefoe-ruffle.forum.reason_status', { code: String(res.status) })
-    );
+    return extractText(app.translator.trans('ernestdefoe-ruffle.forum.reason_status', { code: String(res.status) }));
   } catch {
     try {
       /*
@@ -267,7 +265,7 @@ function prepare(embed: HTMLElement): void {
        */
       const movie = (e as { stage?: string })?.stage === 'movie';
 
-      fail(embed, url, movie ? 'movie' : 'player', movie ? await diagnose(url) ?? undefined : undefined);
+      fail(embed, url, movie ? 'movie' : 'player', movie ? ((await diagnose(url)) ?? undefined) : undefined);
     }
   };
 
