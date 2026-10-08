@@ -135,8 +135,9 @@ class Configure
      */
     private function addBBCode(Configurator $config): void
     {
-        $config->plugins->load('BBCodes');
-
+        // 🚨 Through the property, never plugins->load(): load() builds a NEW
+        // plugin and replaces the one flarum/bbcode already filled, so every
+        // [b], [url] and [img] on the forum stopped parsing in new posts.
         $config->BBCodes->add('SWF', [
             'tagName' => self::TAG,
             'defaultAttribute' => 'url',
@@ -165,7 +166,10 @@ class Configure
      */
     private function addHtmlElement(Configurator $config): void
     {
-        $plugin = $config->plugins->load('HTMLElements');
+        // 🚨 The plugin Scribe already configured, not a fresh one: load()
+        // would replace it and every Scribe post would lose its formatting.
+        // Ruffle boots after Scribe (an optional dependency) so it is there.
+        $plugin = $config->HTMLElements;
 
         $plugin->aliasElement('embed', self::TAG);
         $plugin->aliasAttribute('embed', 'src', 'url');

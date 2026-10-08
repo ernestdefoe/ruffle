@@ -44,6 +44,9 @@
         "flarum-extension": {
             "title": "Ruffle",
             "category": "feature",
+            "optional-dependencies": [
+                "ernestdefoe-scribe"
+            ],
             "icon": {
                 "name": "fas fa-bolt",
                 "backgroundColor": "#d4671b",
